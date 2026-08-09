@@ -26,5 +26,13 @@ class League(db.Model):
     # URL/path for the league's logo.
     logo = db.Column(db.String(255), nullable=True)
 
+    # Relationship allowing us to access all teams
+    # that belong to this league.
+    teams = db.relationship(
+        "Team",
+        back_populates="league",
+        cascade="all, delete-orphan"
+    )
+
     def __repr__(self):
         return f"<League {self.name}>"
