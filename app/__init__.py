@@ -19,7 +19,18 @@ def create_app():
             "status": "running"
         }
 
+    @app.route("/db-test")
+    def db_test():
+        try:
+            db.session.execute(db.text("SELECT 1"))
+            return {
+                "database": "connected",
+                "status": "success"
+            }
+        except Exception as e:
+            return {
+                "database": "connection failed",
+                "error": str(e)
+            }, 500
+
     return app
-
-
-    
