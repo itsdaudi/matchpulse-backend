@@ -83,5 +83,12 @@ class Match(db.Model):
         back_populates="away_matches"
     )
 
+    #all player performance stats for this match.
+    player_stats = db.relationship(
+        "PlayerMatchStat",
+        back_populates="match",
+        cascade="all, delete-orphan"
+    )
+
     def __repr__(self):
         return f"<Match {self.home_team_id} vs {self.away_team_id}>"

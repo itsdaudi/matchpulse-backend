@@ -41,5 +41,12 @@ class Player(db.Model):
         back_populates="players"
     )
 
+    #all match performance stats for this player.
+    match_stats = db.relationship(
+        "PlayerMatchStat",
+        back_populates="player",
+        cascade="all, delete-orphan"
+    )
+
     def __repr__(self):
         return f"<Player {self.name}>"
