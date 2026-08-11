@@ -40,5 +40,17 @@ class Team(db.Model):
     # Relationship allowing us to access the players belonging to this team.
     players = db.relationship("Player", back_populates="team", cascade="all, delete-orphan")
 
+    home_matches = db.relationship(
+        "Match",
+        foreign_keys="Match.home_team_id",
+        back_populates="home_team",
+    )
+
+    away_matches = db.relationship(
+        "Match",
+        foreign_keys="Match.away_team_id",
+        back_populates="away_team",
+    )
+
     def __repr__(self):
         return f"<Team {self.name}>"

@@ -7,7 +7,7 @@ class League(db.Model):
 
     Examples:
     - Premier League
-    - La Liga
+    - Laliga
     - Bundesliga
     - Serie A
     """
@@ -32,6 +32,12 @@ class League(db.Model):
         "Team",
         back_populates="league",
         cascade="all, delete-orphan"
+    )
+
+    matches = db.relationship(
+        "Match",
+        back_populates="league",
+        cascade="all, delete-orphan"    
     )
 
     def __repr__(self):
