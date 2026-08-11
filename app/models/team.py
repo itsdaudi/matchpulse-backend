@@ -37,5 +37,8 @@ class Team(db.Model):
     # Relationship allowing us to access the league from a team.
     league = db.relationship("League", back_populates="teams")
 
+    # Relationship allowing us to access the players belonging to this team.
+    players = db.relationship("Player", back_populates="team", cascade="all, delete-orphan")
+
     def __repr__(self):
         return f"<Team {self.name}>"
