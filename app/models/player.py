@@ -32,6 +32,10 @@ class Player(db.Model):
     # Examples: Goalkeeper, Defender, Midfielder, Forward.
     position = db.Column(db.String(30), nullable=False)
 
+    # Player's nationality.
+    # Examples: Portugal, Brazil, Kenya, Spain.
+    nationality = db.Column(db.String(50), nullable=True)
+
     # URL/path to the player's profile image.
     photo = db.Column(db.String(255), nullable=True)
 

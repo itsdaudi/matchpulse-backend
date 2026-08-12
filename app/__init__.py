@@ -9,6 +9,7 @@ from app.models import League, Team, Player, Match, PlayerMatchStat, Lineup, Lin
 from app.routes.leagues import leagues_bp
 #register team api routes
 from app.routes.teams import teams_bp
+from app.routes.players import players_bp
 
 def create_app():
     app = Flask(__name__)
@@ -21,6 +22,8 @@ def create_app():
     # Register blueprints for the API endpoints
     app.register_blueprint(leagues_bp)
     app.register_blueprint(teams_bp)
+    app.register_blueprint(players_bp)
+
     @app.route("/")
     def home():
         return {
