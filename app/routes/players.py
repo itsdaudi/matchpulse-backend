@@ -60,6 +60,75 @@ def get_player(player_id):
         "photo": player.photo
     }), 200
 
+@players_bp.route('/<int:player_id>', methods=['PATCH'])
+def update_player(player_id):
+    """
+    Update selected information for a player.
+    """
+#find the player by ID from URL
+    player = db.session.get(Player, player_id)
+
+    if not player:
+        return jsonify({
+            "error": "Player not found"
+        }), 404
+
+    data = request.get_json()
+
+    # Update the player's information if provided.
+    if "name" in data:
+        player.name = data["name"]
+    if "team_id" in data:
+        # Check if the new team exists before updating.
+        team = db.session.get(Team, data["team_id"])
+        if not team:
+            return jsonify({
+                "error": "Team not found"
+            }), 404
+        player.team_id = data["team_id"]    
+    if "position" in data:
+        player.position = data["position"]
+    if "shirt_number" in data and data["shirt_number"] is not None:
+        player.shirt_number = data["shirt_number"]
+    if "nationality" in data:
+        player.nationality = data["nationality"]
+    if "photo" in data:
+        player.photo = data["photo"]
+
+    db.session.commit()
+
+    return jsonify({
+        "message": "Player updated successfully",
+        "player": {
+            "id": player.id,
+            "team_id": player.team_id,
+            "name": player.name,
+            "position": player.position,
+            "shirt_number": player.shirt_number,
+            "nationality": player.nationality,
+            "photo": player.photo
+        }
+    }), 200
+
+@players_bp.route("/<int:player_id>", methods=["DELETE"])
+def delete_player(player_id):
+    """
+    Delete a player by their ID.
+    """
+    player = db.session.get(Player, player_id)
+
+    if not player:
+        return jsonify({
+            "error": "Player not found"
+        }), 404
+
+    db.session.delete(player)
+    db.session.commit()
+
+    return jsonify({
+        "message": "Player deleted successfully"
+    }), 200
+
 
 @players_bp.route("", methods=["POST"])
 def create_player():
