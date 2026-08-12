@@ -90,5 +90,12 @@ class Match(db.Model):
         cascade="all, delete-orphan"
     )
 
+    #two lineups for this match, one for each team.
+    lineups = db.relationship(
+        "Lineup",
+        back_populates="match",
+        cascade="all, delete-orphan"
+    )
+
     def __repr__(self):
         return f"<Match {self.home_team_id} vs {self.away_team_id}>"

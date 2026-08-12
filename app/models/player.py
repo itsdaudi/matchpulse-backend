@@ -47,6 +47,12 @@ class Player(db.Model):
         back_populates="player",
         cascade="all, delete-orphan"
     )
+    #all lineups for this player.
+    lineup_entries = db.relationship(
+        "LineupPlayer",
+        back_populates="player",
+        cascade="all, delete-orphan"
+    )
 
     def __repr__(self):
         return f"<Player {self.name}>"

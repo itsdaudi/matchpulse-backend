@@ -52,5 +52,12 @@ class Team(db.Model):
         back_populates="away_team",
     )
 
+    #all lineups for this team.
+    lineups = db.relationship(
+        "Lineup",
+        back_populates="team",
+        cascade="all, delete-orphan"
+    )
+
     def __repr__(self):
         return f"<Team {self.name}>"

@@ -3,7 +3,7 @@ from flask import Flask
 from app.config import Config
 from app.extensions import db, migrate
 
-from app.models import League, Team, Player, Match, PlayerMatchStat
+from app.models import League, Team, Player, Match, PlayerMatchStat, Lineup, LineupPlayer
 def create_app():
     app = Flask(__name__)
 
