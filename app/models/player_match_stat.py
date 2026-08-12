@@ -88,6 +88,72 @@ class PlayerMatchStat(db.Model):
         default=0
     )
 
+    #Goals conceded by the player.
+    #for goalkeepers
+    goals_conceded = db.Column(
+        db.Integer,
+        nullable=False,
+        default=0
+    )
+
+    #number of passes made by the player.
+    passes = db.Column(
+        db.Integer,
+        nullable= False,
+        default = 0
+    )
+
+    #percentage of passes completed by the player.
+    pass_accuracy = db.Column(
+        db.Float,
+        nullable=True
+    )
+
+    #number of tackles made by the player.
+    tackles = db.Column(
+        db.Integer,
+        nullable=False,
+        default=0
+    )
+
+    #number of interceptions made by the player.
+    interceptions = db.Column(
+        db.Integer,
+        nullable=False,
+        default=0
+    )
+
+    #number of clearances made by the player.
+    clearances = db.Column(
+        db.Integer,
+        nullable=False,
+        default=0
+    )
+
+    #number of blocked attempts
+    blocks = db.Column(
+        db.Integer,
+        nullable=False,
+        default=0
+    )
+
+    #number of fouls commited
+    fouls = db.Column(
+        db.Integer,
+        nullable=False,
+        default=0
+    )
+
+    #number of times player was offside
+    offsides = db.Column(
+        db.Integer,
+        nullable=False,
+        default=0
+    )
+
+    
+
+
     # Total shots attempted.
     shots = db.Column(
         db.Integer,
