@@ -136,3 +136,64 @@ def delete_match(match_id):
     return jsonify({
         "message": "Match deleted successfully"
     })
+
+
+def team_stats_to_dict(stats):
+    """Convert MatchTeamStats into a JSON-friendly dictionary."""
+    return {
+        "id": stats.id,
+        "team_id": stats.team_id,
+        "possession": stats.possession,
+        "shots": stats.shots,
+        "shots_on_target": stats.shots_on_target,
+        "shots_off_target": stats.shots_off_target,
+        "corners": stats.corners,
+        "fouls": stats.fouls,
+        "offsides": stats.offsides,
+        "yellow_cards": stats.yellow_cards,
+        "red_cards": stats.red_cards,
+        "passes": stats.passes,
+        "pass_accuracy": stats.pass_accuracy
+    }
+
+
+# Get a complete overview of one match.
+@matches_bp.route("/<int:match_id>/overview", methods=["GET"])
+def get_match_overview(match_id):
+    match = db.session.get(Match, match_id)
+
+    if not match:
+        return jsonify({
+            "error": "Match not found"
+        }), 404
+
+    return jsonify({
+        "match": {
+            "id": match.id,
+            "league_id": match.league_id,
+            "match_date": match.match_date.isoformat(),
+            "venue": match.venue,
+            "status": match.status,
+            "home_team": {
+                "id": match.home_team.id,
+                "name": match.home_team.name,
+                "short_name": match.home_team.short_name,
+                "logo": match.home_team.logo
+            },
+            "away_team": {
+                "id": match.away_team.id,
+                "name": match.away_team.name,
+                "short_name": match.away_team.short_name,
+                "logo": match.away_team.logo
+            },
+            "score": {
+                "home": match.home_score,
+                "away": match.away_score
+            }
+        },
+
+        "team_stats": [
+            team_stats_to_dict(stats)
+            for stats in match.team_stats
+        ]
+    })
