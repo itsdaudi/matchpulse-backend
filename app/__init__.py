@@ -10,6 +10,9 @@ from app.routes.leagues import leagues_bp
 #register team api routes
 from app.routes.teams import teams_bp
 from app.routes.players import players_bp
+from app.routes.match_team_stats import match_team_stats_bp
+from app.routes.matches import matches_bp
+
 
 def create_app():
     app = Flask(__name__)
@@ -23,7 +26,8 @@ def create_app():
     app.register_blueprint(leagues_bp)
     app.register_blueprint(teams_bp)
     app.register_blueprint(players_bp)
-
+    app.register_blueprint(match_team_stats_bp)
+    app.register_blueprint(matches_bp)
     @app.route("/")
     def home():
         return {

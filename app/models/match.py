@@ -41,6 +41,12 @@ class Match(db.Model):
         nullable=False
     )
 
+    #stadium where the match is played.
+    venue = db.Column(
+        db.String(150),
+        nullable= True
+    )
+
     # Current status of the match.
     # Examples: scheduled, live, finished, postponed.
     status = db.Column(
@@ -86,6 +92,12 @@ class Match(db.Model):
     #all player performance stats for this match.
     player_stats = db.relationship(
         "PlayerMatchStat",
+        back_populates="match",
+        cascade="all, delete-orphan"
+    )
+    #team-level statics for this match.
+    team_stats = db.relationship(
+        "MatchTeamStats",
         back_populates="match",
         cascade="all, delete-orphan"
     )

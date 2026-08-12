@@ -52,6 +52,13 @@ class Team(db.Model):
         back_populates="away_team",
     )
 
+    #match statistics for this team
+    match_stats = db.relationship(
+        "MatchTeamStats",
+        back_populates="team",
+        cascade="all, delete-orphan"
+    )
+
     #all lineups for this team.
     lineups = db.relationship(
         "Lineup",
