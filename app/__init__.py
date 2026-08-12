@@ -4,6 +4,10 @@ from app.config import Config
 from app.extensions import db, migrate
 
 from app.models import League, Team, Player, Match, PlayerMatchStat, Lineup, LineupPlayer
+
+#import blueprints for the API endpoints
+from app.routes.leagues import leagues_bp
+
 def create_app():
     app = Flask(__name__)
 
@@ -11,6 +15,9 @@ def create_app():
 
     db.init_app(app)
     migrate.init_app(app, db)
+
+    # Register blueprints for the API endpoints
+    app.register_blueprint(leagues_bp)
 
     @app.route("/")
     def home():
