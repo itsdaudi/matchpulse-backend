@@ -195,5 +195,49 @@ def get_match_overview(match_id):
         "team_stats": [
             team_stats_to_dict(stats)
             for stats in match.team_stats
+        ],
+        "player_stats": [
+            player_stats_to_dict(stats)
+            for stats in match.player_stats
         ]
     })
+
+
+
+def player_stats_to_dict(stats):
+    """Convert PlayerMatchStat into a JSON-friendly dictionary."""
+    return {
+        "id": stats.id,
+        "match_id": stats.match_id,
+
+        "player":{
+            "id": stats.player.id,
+            "name": stats.player.name,
+            "nationality": stats.player.nationality,
+            "position": stats.player.position,
+            "shirt_number": stats.player.shirt_number,
+            "photo": stats.player.photo,
+            "team_id": stats.player.team_id
+        },
+
+
+        "minutes_played": stats.minutes_played,
+        "started": stats.started,
+        "goals": stats.goals,
+        "assists": stats.assists,
+        "yellow_cards": stats.yellow_cards,
+        "red_cards": stats.red_cards,
+        "clean_sheet": stats.clean_sheet,
+        "saves": stats.saves,
+        "goals_conceded": stats.goals_conceded,
+        "shots": stats.shots,
+        "shots_on_target": stats.shots_on_target,
+        "passes": stats.passes,
+        "pass_accuracy": stats.pass_accuracy,
+        "tackles": stats.tackles,
+        "interceptions": stats.interceptions,
+        "clearances": stats.clearances,
+        "blocks": stats.blocks,
+        "fouls": stats.fouls,
+        "offsides": stats.offsides
+    }
