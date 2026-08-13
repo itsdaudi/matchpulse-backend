@@ -13,6 +13,7 @@ from app.routes.players import players_bp
 from app.routes.match_team_stats import match_team_stats_bp
 from app.routes.matches import matches_bp
 from app.routes.player_match_stats import player_match_stats_bp
+from app.routes.lineups import lineups_bp
 
 
 def create_app():
@@ -30,7 +31,7 @@ def create_app():
     app.register_blueprint(match_team_stats_bp)
     app.register_blueprint(matches_bp)
     app.register_blueprint(player_match_stats_bp)
-
+    app.register_blueprint(lineups_bp)
     @app.route("/")
     def home():
         return {
