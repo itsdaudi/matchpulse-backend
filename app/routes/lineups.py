@@ -127,3 +127,48 @@ def add_player_to_lineup(lineup_id):
         "message": "Player added to lineup successfully",
         "player": lineup_player_to_dict(lineup_player)
     }), 201
+
+
+
+# PATCH a player already in a lineup.
+@lineups_bp.route("/<int:lineup_id>/players/<int:lineup_player_id>", methods=["PATCH"])
+def update_lineup_player(lineup_id, lineup_player_id):
+    lineup_player = db.session.get(LineupPlayer, lineup_player_id)
+
+    if not lineup_player or lineup_player.lineup_id != lineup_id:
+        return jsonify({
+            "error": "Lineup player not found"
+        }), 404
+
+    data = request.get_json()
+
+    # Update only the fields supplied by the client.
+    if "position" in data:
+        lineup_player.position = data["position"]
+
+    if "position_x" in data:
+        lineup_player.position_x = data["position_x"]
+
+    if "position_y" in data:
+        lineup_player.position_y = data["position_y"]
+
+    if "starter" in data:
+        lineup_player.starter = data["starter"]
+
+    if "shirt_number" in data:
+        lineup_player.shirt_number = data["shirt_number"]
+
+    db.session.commit()
+
+    return jsonify({
+        "message": "Lineup player updated successfully",
+        "lineup_player": {
+            "id": lineup_player.id,
+            "player_id": lineup_player.player_id,
+            "position": lineup_player.position,
+            "position_x": lineup_player.position_x,
+            "position_y": lineup_player.position_y,
+            "starter": lineup_player.starter,
+            "shirt_number": lineup_player.shirt_number
+        }
+    })
