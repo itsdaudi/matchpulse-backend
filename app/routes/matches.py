@@ -189,6 +189,26 @@ def match_event_to_dict(event):
         "description": event.description
     }
 
+def lineup_to_dict(lineup):
+    """Convert a Lineup into a JSON-friendly dictionary."""
+    return {
+        "id": lineup.id,
+        "formation": lineup.formation,
+        "players": [
+            {
+                "id": lineup_player.id,
+                "player_id": lineup_player.player.id,
+                "name": lineup_player.player.name,
+                "position": lineup_player.player.position,
+                "position_x": lineup_player.position_x,
+                "position_y": lineup_player.position_y,
+                "starter": lineup_player.starter,
+                "shirt_number": lineup_player.shirt_number
+            } for lineup_player in lineup.lineup_players
+        ],
+    }
+        
+
 # Get a complete overview of one match.
 @matches_bp.route("/<int:match_id>/overview", methods=["GET"])
 def get_match_overview(match_id):
@@ -235,6 +255,10 @@ def get_match_overview(match_id):
         "events": [
             match_event_to_dict(event)
             for event in sorted(match.events, key=lambda event: (event.minute, event.added_time or 0))
+        ],
+        "lineups": [
+            lineup_to_dict(lineup)
+            for lineup in match.lineups
         ]
     })
 
