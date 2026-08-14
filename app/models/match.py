@@ -109,5 +109,12 @@ class Match(db.Model):
         cascade="all, delete-orphan"
     )
 
+    #all events that occurred during this match.
+    events = db.relationship(
+        "MatchEvent",
+        back_populates="match",
+        cascade="all, delete-orphan"
+    )   
+
     def __repr__(self):
         return f"<Match {self.home_team_id} vs {self.away_team_id}>"

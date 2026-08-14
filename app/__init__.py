@@ -3,7 +3,7 @@ from flask import Flask
 from app.config import Config
 from app.extensions import db, migrate
 
-from app.models import League, Team, Player, Match, PlayerMatchStat, Lineup, LineupPlayer
+from app.models import League, Team, Player, Match, PlayerMatchStat, Lineup, LineupPlayer, MatchTeamStats, MatchEvent
 
 #import blueprints for the API endpoints
 from app.routes.leagues import leagues_bp
@@ -14,6 +14,7 @@ from app.routes.match_team_stats import match_team_stats_bp
 from app.routes.matches import matches_bp
 from app.routes.player_match_stats import player_match_stats_bp
 from app.routes.lineups import lineups_bp
+from app.routes.match_events import match_events_bp
 
 
 def create_app():
@@ -32,6 +33,8 @@ def create_app():
     app.register_blueprint(matches_bp)
     app.register_blueprint(player_match_stats_bp)
     app.register_blueprint(lineups_bp)
+    app.register_blueprint(match_events_bp)
+
     @app.route("/")
     def home():
         return {

@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 
 from app.extensions import db
-from app.models import Match
+from app.models import Match, MatchEvent
 
 
 # Blueprint for match endpoints.
@@ -156,6 +156,38 @@ def team_stats_to_dict(stats):
         "pass_accuracy": stats.pass_accuracy
     }
 
+def match_event_to_dict(event):
+    """Convert a MatchEvent into a JSON-friendly dictionary."""
+
+    return {
+        "id": event.id,
+        "event_type": event.event_type,
+        "minute": event.minute,
+        "added_time": event.added_time,
+        "team_id": event.team_id,
+
+        "player": {
+            "id": event.player.id,
+            "name": event.player.name
+        } if event.player else None,
+
+        "assist_player": {
+            "id": event.assist_player.id,
+            "name": event.assist_player.name
+        } if event.assist_player else None,
+
+        "substitution_in": {
+            "id": event.substitution_in_player.id,
+            "name": event.substitution_in_player.name
+        } if event.substitution_in_player else None,
+
+        "substitution_out": {
+            "id": event.substitution_out_player.id,
+            "name": event.substitution_out_player.name
+        } if event.substitution_out_player else None,
+
+        "description": event.description
+    }
 
 # Get a complete overview of one match.
 @matches_bp.route("/<int:match_id>/overview", methods=["GET"])
@@ -199,6 +231,10 @@ def get_match_overview(match_id):
         "player_stats": [
             player_stats_to_dict(stats)
             for stats in match.player_stats
+        ],
+        "events": [
+            match_event_to_dict(event)
+            for event in sorted(match.events, key=lambda event: (event.minute, event.added_time or 0))
         ]
     })
 

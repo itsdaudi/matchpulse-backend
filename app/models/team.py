@@ -66,5 +66,11 @@ class Team(db.Model):
         cascade="all, delete-orphan"
     )
 
+    #all events for this team.
+    events = db.relationship(
+        "MatchEvent",
+        back_populates="team"
+    )
+
     def __repr__(self):
         return f"<Team {self.name}>"

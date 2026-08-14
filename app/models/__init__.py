@@ -9,3 +9,4 @@ from app.models.player_match_stat import PlayerMatchStat
 from app.models.lineup import Lineup
 from app.models.lineup_player import LineupPlayer
 from app.models.match_team_stats import MatchTeamStats
+from app.models.match_event import MatchEvent

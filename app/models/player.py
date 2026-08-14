@@ -58,5 +58,12 @@ class Player(db.Model):
         cascade="all, delete-orphan"
     )
 
+    #all events for this player.
+    events = db.relationship(
+        "MatchEvent",
+        foreign_keys="MatchEvent.player_id",
+        back_populates="player"
+    )
+
     def __repr__(self):
         return f"<Player {self.name}>"
