@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 
 from app.extensions import db
-from app.models import MatchEvent
+from app.models import MatchEvent, Match
 
 
 match_events_bp = Blueprint(
@@ -60,6 +60,14 @@ def get_match_event(event_id):
 def create_match_event():
     data = request.get_json()
 
+    # Find the match this event belongs to.
+    match = db.session.get(Match, data["match_id"])
+
+    if not match:
+        return jsonify({
+            "error": "Match not found"
+        }), 404
+
     event = MatchEvent(
         match_id=data["match_id"],
         team_id=data["team_id"],
@@ -68,17 +76,30 @@ def create_match_event():
         event_type=data["event_type"],
         minute=data["minute"],
         added_time=data.get("added_time"),
-        substitution_in_player_id=data.get("substitution_in_player_id"),
-        substitution_out_player_id=data.get("substitution_out_player_id"),
+        substitution_in_player_id=data.get(
+            "substitution_in_player_id"
+        ),
+        substitution_out_player_id=data.get(
+            "substitution_out_player_id"
+        ),
         description=data.get("description")
     )
 
     db.session.add(event)
+
+    # If this is a goal, recalculate the match score.
+    if event.event_type == "goal":
+        match.update_score_from_events()
+
     db.session.commit()
 
     return jsonify({
         "message": "Match event created successfully",
-        "match_event": event_to_dict(event)
+        "match_event": event_to_dict(event),
+        "score": {
+            "home": match.home_score,
+            "away": match.away_score
+        }
     }), 201
 
 
@@ -91,6 +112,9 @@ def update_match_event(event_id):
         return jsonify({
             "error": "Match event not found"
         }), 404
+
+    # Remember the match before making changes.
+    match = event.match
 
     data = request.get_json()
 
@@ -113,19 +137,31 @@ def update_match_event(event_id):
         event.added_time = data["added_time"]
 
     if "substitution_in_player_id" in data:
-        event.substitution_in_player_id = data["substitution_in_player_id"]
+        event.substitution_in_player_id = data[
+            "substitution_in_player_id"
+        ]
 
     if "substitution_out_player_id" in data:
-        event.substitution_out_player_id = data["substitution_out_player_id"]
+        event.substitution_out_player_id = data[
+            "substitution_out_player_id"
+        ]
 
     if "description" in data:
         event.description = data["description"]
+
+    # Recalculate the score because the event may
+    # have changed from/to a goal or changed team.
+    match.update_score_from_events()
 
     db.session.commit()
 
     return jsonify({
         "message": "Match event updated successfully",
-        "match_event": event_to_dict(event)
+        "match_event": event_to_dict(event),
+        "score": {
+            "home": match.home_score,
+            "away": match.away_score
+        }
     })
 
 
@@ -139,9 +175,26 @@ def delete_match_event(event_id):
             "error": "Match event not found"
         }), 404
 
+    # Remember the match before deleting the event.
+    match = event.match
+
     db.session.delete(event)
+
+    # Recalculate after removing the event.
+    #
+    # SQLAlchemy still keeps the deleted object in the
+    # relationship until the session is flushed, so flush
+    # first to make sure the deleted goal is no longer counted.
+    db.session.flush()
+
+    match.update_score_from_events()
+
     db.session.commit()
 
     return jsonify({
-        "message": "Match event deleted successfully"
+        "message": "Match event deleted successfully",
+        "score": {
+            "home": match.home_score,
+            "away": match.away_score
+        }
     })

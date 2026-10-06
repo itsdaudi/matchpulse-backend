@@ -41,10 +41,10 @@ class Match(db.Model):
         nullable=False
     )
 
-    #stadium where the match is played.
+    # Stadium where the match is played.
     venue = db.Column(
         db.String(150),
-        nullable= True
+        nullable=True
     )
 
     # Current status of the match.
@@ -89,32 +89,60 @@ class Match(db.Model):
         back_populates="away_matches"
     )
 
-    #all player performance stats for this match.
+    # All player performance stats for this match.
     player_stats = db.relationship(
         "PlayerMatchStat",
         back_populates="match",
         cascade="all, delete-orphan"
     )
-    #team-level statics for this match.
+
+    # Team-level statistics for this match.
     team_stats = db.relationship(
         "MatchTeamStats",
         back_populates="match",
         cascade="all, delete-orphan"
     )
 
-    #two lineups for this match, one for each team.
+    # Two lineups for this match, one for each team.
     lineups = db.relationship(
         "Lineup",
         back_populates="match",
         cascade="all, delete-orphan"
     )
 
-    #all events that occurred during this match.
+    # All events that occurred during this match.
     events = db.relationship(
         "MatchEvent",
         back_populates="match",
         cascade="all, delete-orphan"
-    )   
+    )
+
+    def update_score_from_events(self):
+        """
+        Recalculate the match score from its goal events.
+
+        Only goal events affect the score.
+        """
+
+        home_score = 0
+        away_score = 0
+
+        for event in self.events:
+
+            # Ignore cards, substitutions, etc.
+            if event.event_type != "goal":
+                continue
+
+            # Goal scored by the home team.
+            if event.team_id == self.home_team_id:
+                home_score += 1
+
+            # Goal scored by the away team.
+            elif event.team_id == self.away_team_id:
+                away_score += 1
+
+        self.home_score = home_score
+        self.away_score = away_score
 
     def __repr__(self):
         return f"<Match {self.home_team_id} vs {self.away_team_id}>"
